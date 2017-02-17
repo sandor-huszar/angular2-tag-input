@@ -251,6 +251,10 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
     );
   }
 
+  public get maxItemsReached(): boolean {
+    return this.maxItems !== undefined && this.tagsList && this.tagsList.length >= this.maxItems;
+  }
+
   private _splitString(tagString: string): string[] {
     tagString = tagString.trim();
     let tags = tagString.split(this.splitRegExp);
@@ -315,10 +319,6 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
 
   private _resetInput(): void {
     this.tagInputField.setValue('');
-  }
-  
-  private get maxItemsReached(): boolean {
-    return this.maxItems !== undefined && this.tagsList && this.tagsList.length >= this.maxItems;
   }
 
   /** Implemented as part of ControlValueAccessor. */
