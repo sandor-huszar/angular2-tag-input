@@ -37,7 +37,7 @@ export interface AutoCompleteItem {
       (tagRemoved)="_removeTag($event)"
       *ngFor="let tag of tagsList; let index = index">
     </rl-tag-input-item>
-    <form [formGroup]="tagInputForm" class="ng2-tag-input-form" [hidden]="maxItemsReached">
+    <form [formGroup]="tagInputForm" class="ng2-tag-input-form" [class.hidden]="maxItemsReached">
       <input
         class="ng2-tag-input-field"
         type="text"
@@ -72,6 +72,9 @@ export interface AutoCompleteItem {
 
      :host .ng2-tag-input-form {
       display: inline;
+    }
+    :host .ng2-tag-input-form.hidden {
+      display: none;
     }
 
      :host .ng2-tag-input-field {
@@ -169,7 +172,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
     })
     .subscribe();
 	
-	const maxItemsReached = this.maxItems !== undefined && this.tagsList && this.tagsList.length > this.maxItems;
+    const maxItemsReached = this.maxItems !== undefined && this.tagsList && this.tagsList.length > this.maxItems;
 
     if (maxItemsReached) {
         this.maxItems = this.tagsList.length;
@@ -315,7 +318,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   }
   
   private get maxItemsReached(): boolean {
-    return this.maxItems !== undefined && this.tagsList.length >= this.maxItems;
+    return this.maxItems !== undefined && this.tagsList && this.tagsList.length >= this.maxItems;
   }
 
   /** Implemented as part of ControlValueAccessor. */
