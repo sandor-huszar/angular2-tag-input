@@ -37,7 +37,7 @@ export interface AutoCompleteItem {
       (tagRemoved)="_removeTag($event)"
       *ngFor="let tag of tagsList; let index = index">
     </rl-tag-input-item>
-    <form [formGroup]="tagInputForm" class="ng2-tag-input-form">
+    <form [formGroup]="tagInputForm" class="ng2-tag-input-form" [hidden]="maxItemsReached">
       <input
         class="ng2-tag-input-field"
         type="text"
@@ -116,6 +116,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   @Input() autocompleteSelectFirstItem: boolean = true;
   @Input() pasteSplitPattern: string = ',';
   @Input() placeholder: string = 'Add a tag';
+  @Input() maxItems: number = undefined;
   @Output('addTag') addTag: EventEmitter<string> = new EventEmitter<string>();
   @Output('removeTag') removeTag: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild('tagInputElement') tagInputElement: ElementRef;
@@ -167,6 +168,12 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
       });
     })
     .subscribe();
+	
+	const maxItemsReached = this.maxItems !== undefined && this.tagsList && this.tagsList.length > this.maxItems;
+
+    if (maxItemsReached) {
+        this.maxItems = this.tagsList.length;
+    }
   }
 
   onKeydown(event: KeyboardEvent): void {
@@ -305,6 +312,10 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
 
   private _resetInput(): void {
     this.tagInputField.setValue('');
+  }
+  
+  private get maxItemsReached(): boolean {
+    return this.maxItems !== undefined && this.tagsList.length >= this.maxItems;
   }
 
   /** Implemented as part of ControlValueAccessor. */
