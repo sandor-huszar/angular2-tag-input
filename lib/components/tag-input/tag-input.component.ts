@@ -44,6 +44,7 @@ export interface AutoCompleteItem {
         #tagInputElement
         formControlName="tagInputField"
         [placeholder]="placeholder"
+		[attr.maxlength]="maxTagLength"
         (paste)="onInputPaste($event)"
         (keydown)="onKeydown($event)"
         (blur)="onInputBlurred($event)"
@@ -120,6 +121,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   @Input() pasteSplitPattern: string = ',';
   @Input() placeholder: string = 'Add a tag';
   @Input() maxItems: number = undefined;
+  @Input() maxTagLength: number = 70;
   @Output('addTag') addTag: EventEmitter<string> = new EventEmitter<string>();
   @Output('removeTag') removeTag: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild('tagInputElement') tagInputElement: ElementRef;
