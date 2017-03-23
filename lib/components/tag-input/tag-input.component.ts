@@ -135,6 +135,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   private get inputValue(): string {
     return this.tagInputField.value;
   }
+  private validTagsNumber: number = 0;
 
   public tagInputForm: FormGroup;
   public autocompleteResults: string[] = [];
@@ -264,8 +265,17 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   }
 
   private _isTagValid(tagString: string): boolean {
-    return this.allowedTagsPattern.test(tagString) &&
-           this._isTagUnique(tagString);
+      let tagsNum = true;
+      if (this.maxItems) {
+          tagsNum = ((this.tagsList.length + this.validTagsNumber + 1) <= this.maxItems);
+      }
+
+      let isTagValid = (this.allowedTagsPattern.test(tagString) && this._isTagUnique(tagString) && tagString.length <= this.maxTagLength && tagsNum);
+      if (isTagValid) {
+          this.validTagsNumber++;
+      }
+
+      return isTagValid;
   }
 
   private _isTagUnique(tagString: string): boolean {
@@ -285,6 +295,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   }
 
   private _addTags(tags: string[]): void {
+	this.validTagsNumber = 0;
     let validTags = tags.map(tag => tag.trim())
                         .filter(tag => this._isTagValid(tag))
                         .filter((tag, index, tagArray) => tagArray.indexOf(tag) === index)
