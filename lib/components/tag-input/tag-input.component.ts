@@ -297,6 +297,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   private _addTags(tags: string[]): void {
 	this.validTagsNumber = 0;
     let validTags = tags.map(tag => tag.trim())
+                        .map(tag => this.removeSharp(tag))
                         .filter(tag => this._isTagValid(tag))
                         .filter((tag, index, tagArray) => tagArray.indexOf(tag) === index)
                         .filter(tag => (this.showAutocomplete() && this.autocompleteMustMatch) ? this._isTagAutocompleteItem(tag) : true);
@@ -332,6 +333,14 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
 
   private _resetInput(): void {
     this.tagInputField.setValue('');
+  }
+  
+  private removeSharp(tag: string): string {
+    if( tag.charAt( 0 ) === '#' ) {
+      tag = tag.slice( 1 );
+    }
+
+    return tag;
   }
 
   /** Implemented as part of ControlValueAccessor. */
