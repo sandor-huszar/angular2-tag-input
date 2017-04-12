@@ -124,6 +124,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   @Input() maxTagLength: number = 70;
   @Output('addTag') addTag: EventEmitter<string> = new EventEmitter<string>();
   @Output('removeTag') removeTag: EventEmitter<string> = new EventEmitter<string>();
+  @Output('inputChanged') inputChanged: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild('tagInputElement') tagInputElement: ElementRef;
 
   private canShowAutoComplete: boolean = false;
@@ -165,6 +166,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
 
     this.tagInputSubscription = this.tagInputField.valueChanges
     .do(value => {
+      this.inputChanged.emit(value);
       this.autocompleteResults = this.autocompleteItems.filter(item => {
         /**
          * _isTagUnique makes sure to remove items from the autocompelte dropdown if they have
