@@ -112,6 +112,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   @Input() addOnEnter: boolean = true;
   @Input() addOnPaste: boolean = true;
   @Input() addOnSpace: boolean = false;
+  @Input() addOnSemicolon: boolean = true;
   @Input() allowDuplicates: boolean = false;
   @Input() allowedTagsPattern: RegExp = /.+/;
   @Input() autocomplete: boolean = false;
@@ -207,6 +208,14 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
 
       case KEYS.space:
         if (this.addOnSpace) {
+          this._addTags([this.inputValue]);
+          event.preventDefault();
+        }
+        break;
+
+      case 186:
+      case 59:
+        if (this.addOnSemicolon) {
           this._addTags([this.inputValue]);
           event.preventDefault();
         }
