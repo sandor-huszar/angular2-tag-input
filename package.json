@@ -1,6 +1,6 @@
 {
   "name": "bf-ng2-tag-input",
-  "version": "1.2.3-j",
+  "version": "1.2.3-k",
   "description": "Tag input component for Angular 2",
   "main": "dist/index.js",
   "keywords": [
@@ -20,11 +20,6 @@
   },
   "author": "TEAM COOL",
   "license": "ISC",
-  "peerDependencies": {
-    "@angular/common": "^2.2.4",
-    "@angular/core": "^2.2.4",
-    "@angular/forms": "^2.2.4"
-  },
   "devDependencies": {
     "@angular/common": "^2.2.4",
     "@angular/compiler": "^2.2.4",
