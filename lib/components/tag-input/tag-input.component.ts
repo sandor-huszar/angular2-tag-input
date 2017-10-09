@@ -123,6 +123,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   @Input() placeholder: string = 'Add a tag';
   @Input() maxItems: number = undefined;
   @Input() maxTagLength: number = 70;
+  @Input() minTagLength: number = 1;
   @Output('addTag') addTag: EventEmitter<string> = new EventEmitter<string>();
   @Output('removeTag') removeTag: EventEmitter<string> = new EventEmitter<string>();
   @Output('inputChanged') inputChanged: EventEmitter<string> = new EventEmitter<string>();
@@ -281,7 +282,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
           tagsNum = ((this.tagsList.length + this.validTagsNumber + 1) <= this.maxItems);
       }
 
-      let isTagValid = (this.allowedTagsPattern.test(tagString) && this._isTagUnique(tagString) && tagString.length <= this.maxTagLength && tagsNum);
+      let isTagValid = (this.allowedTagsPattern.test(tagString) && this._isTagUnique(tagString) && tagString.length >= this.minTagLength && tagString.length <= this.maxTagLength && tagsNum);
       if (isTagValid) {
           this.validTagsNumber++;
       }
