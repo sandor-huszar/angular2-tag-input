@@ -127,6 +127,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   @Output('addTag') addTag: EventEmitter<string> = new EventEmitter<string>();
   @Output('removeTag') removeTag: EventEmitter<string> = new EventEmitter<string>();
   @Output('inputChanged') inputChanged: EventEmitter<string> = new EventEmitter<string>();
+  @Output('onFocus') onFocus: EventEmitter = new EventEmitter();
   @ViewChild('tagInputElement') tagInputElement: ElementRef;
 
   private canShowAutoComplete: boolean = false;
@@ -178,7 +179,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
       });
     })
     .subscribe();
-	
+
     const maxItemsReached = this.maxItems !== undefined && this.tagsList && this.tagsList.length > this.maxItems;
 
     if (maxItemsReached) {
@@ -235,6 +236,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   onInputFocused(): void {
     this.isFocused = true;
     setTimeout(() => this.canShowAutoComplete = true);
+    this.onFocus.emit();
   }
 
   onInputPaste(event): void {
@@ -346,7 +348,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   private _resetInput(): void {
     this.tagInputField.setValue('');
   }
-  
+
   private removeSharp(tag: string): string {
     if( tag.charAt( 0 ) === '#' ) {
       tag = tag.slice( 1 );
