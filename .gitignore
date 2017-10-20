@@ -3,6 +3,3 @@ typings
 dist
 lib/**/*.css
 
-.idea/
-*.swp
-/nbproject/
