@@ -2,12 +2,7 @@ import { Component, EventEmitter, HostBinding, Input, Output } from '@angular/co
 
 @Component({
   selector: 'rl-tag-input-item',
-  template: `
-    {{text}}
-    <span
-    class="ng2-tag-input-remove"
-    (click)="removeTag()">&times;</span>
-  `,
+  template: `{{text}}<span class="ng2-tag-input-remove" (click)="removeTag()">&times;</span>`,
   styles: [`
     :host {
       font-family: "Roboto", "Helvetica Neue", sans-serif;
