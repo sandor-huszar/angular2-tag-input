@@ -170,13 +170,15 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
     this.tagInputSubscription = this.tagInputField.valueChanges
     .do(value => {
       this.inputChanged.emit(value);
-      this.autocompleteResults = this.autocompleteItems.filter(item => {
-        /**
-         * _isTagUnique makes sure to remove items from the autocompelte dropdown if they have
-         * already been added to the model, and allowDuplicates is false
-         */
-        return item.toLowerCase().indexOf(value.toLowerCase()) > -1 && this._isTagUnique(item);
-      });
+      if (value.length >= this.minTagLength) {
+        this.autocompleteResults = this.autocompleteItems.filter(item => {
+          /**
+           * _isTagUnique makes sure to remove items from the autocompelte dropdown if they have
+           * already been added to the model, and allowDuplicates is false
+           */
+          return item.toLowerCase().indexOf(value.toLowerCase()) > -1 && this._isTagUnique(item);
+        });
+      }
     })
     .subscribe();
 
