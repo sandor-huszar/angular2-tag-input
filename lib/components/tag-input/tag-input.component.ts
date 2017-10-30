@@ -128,6 +128,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   @Output('removeTag') removeTag: EventEmitter<string> = new EventEmitter<string>();
   @Output('inputChanged') inputChanged: EventEmitter<string> = new EventEmitter<string>();
   @Output('onFocus') onFocus: EventEmitter<any> = new EventEmitter<any>();
+  @Output('validateError') validateError: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild('tagInputElement') tagInputElement: ElementRef;
 
   private canShowAutoComplete: boolean = false;
@@ -289,6 +290,8 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
       let isTagValid = (this.allowedTagsPattern.test(tagString) && this._isTagUnique(tagString) && tagString.length >= this.minTagLength && tagString.length <= this.maxTagLength && tagsNum);
       if (isTagValid) {
           this.validTagsNumber++;
+      } else if (tagString.length < this.minTagLength) {
+        this.validateError.emit('minTagLength');
       }
 
       return isTagValid;
