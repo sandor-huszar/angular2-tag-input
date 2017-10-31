@@ -287,11 +287,29 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
           tagsNum = ((this.tagsList.length + this.validTagsNumber + 1) <= this.maxItems);
       }
 
-      let isTagValid = (this.allowedTagsPattern.test(tagString) && this._isTagUnique(tagString) && tagString.length >= this.minTagLength && tagString.length <= this.maxTagLength && tagsNum);
+      let isTagContainOnlyAllowedChar = this.allowedTagsPattern.test(tagString);
+      if (!isTagContainOnlyAllowedChar) {
+        this.validateError.emit('isTagContainNotAllowedChar');
+      }
+
+      let isTagUnique = this._isTagUnique(tagString);
+      if (!isTagUnique) {
+        this.validateError.emit('isTagNotUnique');
+      }
+
+      let isTagNotTooShort =  tagString.length >= this.minTagLength;
+      if (!isTagNotTooShort) {
+        this.validateError.emit('minTagLength');
+      }
+
+      let isTagNotTooLong = tagString.length <= this.maxTagLength;
+      if (!isTagNotTooLong) {
+        this.validateError.emit('maxTagLength');
+      }
+
+      let isTagValid = (isTagContainOnlyAllowedChar && isTagUnique && isTagNotTooShort && isTagNotTooLong && tagsNum);
       if (isTagValid) {
           this.validTagsNumber++;
-      } else if (tagString.length < this.minTagLength) {
-        this.validateError.emit('minTagLength');
       }
 
       return isTagValid;
