@@ -11,7 +11,9 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, FormBuilder, FormGroup } from '@angular/forms';
+import {
+  AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, FormBuilder, FormGroup
+} from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { KEYS } from '../../shared/tag-input-keys';
@@ -134,12 +136,15 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   private canShowAutoComplete: boolean = false;
   private tagInputSubscription: Subscription;
   private splitRegExp: RegExp;
+
   private get tagInputField(): AbstractControl {
     return this.tagInputForm.get('tagInputField');
   }
+
   private get inputValue(): string {
     return this.tagInputField.value;
   }
+
   private validTagsNumber: number = 0;
 
   public tagInputForm: FormGroup;
@@ -157,9 +162,9 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
     }
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private elementRef: ElementRef) {}
+  constructor(private fb: FormBuilder,
+              private elementRef: ElementRef) {
+  }
 
   ngOnInit() {
     this.splitRegExp = new RegExp(this.pasteSplitPattern);
@@ -169,9 +174,8 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
     });
 
     this.tagInputSubscription = this.tagInputField.valueChanges
-    .do(value => {
-      this.inputChanged.emit(value);
-      if (value.length >= this.minTagLength) {
+      .do(value => {
+        this.inputChanged.emit(value);
         this.autocompleteResults = this.autocompleteItems.filter(item => {
           /**
            * _isTagUnique makes sure to remove items from the autocompelte dropdown if they have
@@ -179,14 +183,13 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
            */
           return item.toLowerCase().indexOf(value.toLowerCase()) > -1 && this._isTagUnique(item);
         });
-      }
-    })
-    .subscribe();
+      })
+      .subscribe();
 
     const maxItemsReached = this.maxItems !== undefined && this.tagsList && this.tagsList.length > this.maxItems;
 
     if (maxItemsReached) {
-        this.maxItems = this.tagsList.length;
+      this.maxItems = this.tagsList.length;
     }
   }
 
@@ -232,7 +235,9 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   }
 
   onInputBlurred(event): void {
-    if (this.addOnBlur) { this._addTags([this.inputValue]); }
+    if (this.addOnBlur) {
+      this._addTags([this.inputValue]);
+    }
     this.isFocused = false;
   }
 
@@ -267,7 +272,7 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
       this.autocompleteItems &&
       this.autocompleteItems.length > 0 &&
       this.canShowAutoComplete &&
-      this.inputValue.length > 0
+      this.inputValue.length >= this.minTagLength
     );
   }
 
@@ -282,37 +287,37 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   }
 
   private _isTagValid(tagString: string): boolean {
-      let tagsNum = true;
-      if (this.maxItems) {
-          tagsNum = ((this.tagsList.length + this.validTagsNumber + 1) <= this.maxItems);
-      }
+    let tagsNum = true;
+    if (this.maxItems) {
+      tagsNum = ((this.tagsList.length + this.validTagsNumber + 1) <= this.maxItems);
+    }
 
-      let isTagContainOnlyAllowedChar = this.allowedTagsPattern.test(tagString);
-      if (!isTagContainOnlyAllowedChar) {
-        this.validateError.emit('isTagContainNotAllowedChar');
-      }
+    let isTagContainOnlyAllowedChar = this.allowedTagsPattern.test(tagString);
+    if (!isTagContainOnlyAllowedChar) {
+      this.validateError.emit('isTagContainNotAllowedChar');
+    }
 
-      let isTagUnique = this._isTagUnique(tagString);
-      if (!isTagUnique) {
-        this.validateError.emit('isTagNotUnique');
-      }
+    let isTagUnique = this._isTagUnique(tagString);
+    if (!isTagUnique) {
+      this.validateError.emit('isTagNotUnique');
+    }
 
-      let isTagNotTooShort =  tagString.length >= this.minTagLength;
-      if (!isTagNotTooShort) {
-        this.validateError.emit('minTagLength');
-      }
+    let isTagNotTooShort = tagString.length >= this.minTagLength;
+    if (!isTagNotTooShort) {
+      this.validateError.emit('minTagLength');
+    }
 
-      let isTagNotTooLong = tagString.length <= this.maxTagLength;
-      if (!isTagNotTooLong) {
-        this.validateError.emit('maxTagLength');
-      }
+    let isTagNotTooLong = tagString.length <= this.maxTagLength;
+    if (!isTagNotTooLong) {
+      this.validateError.emit('maxTagLength');
+    }
 
-      let isTagValid = (isTagContainOnlyAllowedChar && isTagUnique && isTagNotTooShort && isTagNotTooLong && tagsNum);
-      if (isTagValid) {
-          this.validTagsNumber++;
-      }
+    let isTagValid = (isTagContainOnlyAllowedChar && isTagUnique && isTagNotTooShort && isTagNotTooLong && tagsNum);
+    if (isTagValid) {
+      this.validTagsNumber++;
+    }
 
-      return isTagValid;
+    return isTagValid;
   }
 
   private _isTagUnique(tagString: string): boolean {
@@ -332,12 +337,12 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   }
 
   private _addTags(tags: string[]): void {
-	this.validTagsNumber = 0;
+    this.validTagsNumber = 0;
     let validTags = tags.map(tag => tag.trim())
-                        .map(tag => this.removeSharp(tag))
-                        .filter(tag => this._isTagValid(tag))
-                        .filter((tag, index, tagArray) => tagArray.indexOf(tag) === index)
-                        .filter(tag => (this.showAutocomplete() && this.autocompleteMustMatch) ? this._isTagAutocompleteItem(tag) : true);
+      .map(tag => this.removeSharp(tag))
+      .filter(tag => this._isTagValid(tag))
+      .filter((tag, index, tagArray) => tagArray.indexOf(tag) === index)
+      .filter(tag => (this.showAutocomplete() && this.autocompleteMustMatch) ? this._isTagAutocompleteItem(tag) : true);
 
     this.tagsList = this.tagsList.concat(validTags);
     this._resetSelected();
@@ -373,17 +378,19 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   }
 
   private removeSharp(tag: string): string {
-    if( tag.charAt( 0 ) === '#' ) {
-      tag = tag.slice( 1 );
+    if (tag.charAt(0) === '#') {
+      tag = tag.slice(1);
     }
 
     return tag;
   }
 
   /** Implemented as part of ControlValueAccessor. */
-  onChange: (value: any) => any = () => { };
+  onChange: (value: any) => any = () => {
+  };
 
-  onTouched: () => any = () => { };
+  onTouched: () => any = () => {
+  };
 
   writeValue(value: any) {
     this.tagsList = value;

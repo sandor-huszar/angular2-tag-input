@@ -159,7 +159,7 @@ export class TagInputAutocompleteComponent implements OnChanges, OnDestroy, OnIn
   }
 
   selectItem(itemIndex?: number): void {
-    let itemToEmit = itemIndex ? this.items[itemIndex] : this.items[this.selectedItemIndex.getValue()];
+    let itemToEmit = itemIndex >= 0 ? this.items[itemIndex] : this.items[this.selectedItemIndex.getValue()];
     if (itemToEmit) {
       this.itemSelected.emit(itemToEmit);
     }
