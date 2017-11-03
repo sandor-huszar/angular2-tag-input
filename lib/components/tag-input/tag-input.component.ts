@@ -248,11 +248,13 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
   }
 
   onInputPaste(event): void {
-    let clipboardData = event.clipboardData || (event.originalEvent && event.originalEvent.clipboardData);
-    let pastedString = clipboardData.getData('text/plain');
-    let tags = this._splitString(pastedString);
-    this._addTags(tags);
-    setTimeout(() => this._resetInput());
+    if (this.addOnPaste) {
+      let clipboardData = event.clipboardData || (event.originalEvent && event.originalEvent.clipboardData);
+      let pastedString = clipboardData.getData('text/plain');
+      let tags = this._splitString(pastedString);
+      this._addTags(tags);
+      setTimeout(() => this._resetInput());
+    }
   }
 
   onAutocompleteSelect(selectedItem) {
