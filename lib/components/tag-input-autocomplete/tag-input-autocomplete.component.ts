@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { KEYS } from '../../shared/tag-input-keys';
 
@@ -9,7 +10,7 @@ import { KEYS } from '../../shared/tag-input-keys';
   template: `
     <div
       *ngFor="let item of items; let itemIndex = index"
-      [ngClass]="{ 'is-selected': selectedItemIndex === itemIndex }"
+      [ngClass]="{ 'is-selected': (selectedItemIndex|async) === itemIndex }"
       (mousedown)="selectItem(itemIndex)"
       class="rl-autocomplete-item">
       {{item}}
@@ -44,7 +45,7 @@ export class TagInputAutocompleteComponent implements OnChanges, OnDestroy, OnIn
   @Input() selectFirstItem: boolean = false;
   @Output() itemSelected: EventEmitter<string> = new EventEmitter<string>();
   @Output() enterPressed: EventEmitter<any> = new EventEmitter<any>();
-  public selectedItemIndex: number = null;
+  public selectedItemIndex = new BehaviorSubject<number>(null);
   private keySubscription: Subscription;
   private get itemsCount(): Number {
     return this.items ? this.items.length : 0;
@@ -95,10 +96,10 @@ export class TagInputAutocompleteComponent implements OnChanges, OnDestroy, OnIn
     if (choices.length < 1) {
       return;
     }
-    if (this.selectedItemIndex < 0) {
+    if (this.selectedItemIndex.getValue() < 0) {
       return;
     }
-    let highlighted: any = choices[this.selectedItemIndex];
+    let highlighted: any = choices[this.selectedItemIndex.getValue()];
     if (!highlighted) {
       return;
     }
@@ -113,18 +114,18 @@ export class TagInputAutocompleteComponent implements OnChanges, OnDestroy, OnIn
   }
 
   goToTop() {
-    this.selectedItemIndex = 0;
+    this.selectedItemIndex.next(0);
     this.ensureHighlightVisible();
   }
 
   goToBottom(itemsCount) {
-    this.selectedItemIndex = itemsCount - 1;
+    this.selectedItemIndex.next(itemsCount - 1);
     this.ensureHighlightVisible();
   }
 
   goToNext() {
-    if (this.selectedItemIndex + 1 < this.itemsCount) {
-      this.selectedItemIndex++;
+    if (this.selectedItemIndex.getValue() + 1 < this.itemsCount) {
+      this.selectedItemIndex.next(this.selectedItemIndex.getValue() + 1);
     } else {
       this.goToTop();
     }
@@ -132,8 +133,8 @@ export class TagInputAutocompleteComponent implements OnChanges, OnDestroy, OnIn
   }
 
   goToPrevious() {
-    if (this.selectedItemIndex - 1 >= 0) {
-      this.selectedItemIndex--;
+    if (this.selectedItemIndex.getValue() - 1 >= 0) {
+      this.selectedItemIndex.next(this.selectedItemIndex.getValue() - 1);
     } else {
       this.goToBottom(this.itemsCount);
     }
@@ -141,7 +142,7 @@ export class TagInputAutocompleteComponent implements OnChanges, OnDestroy, OnIn
   }
 
   handleUpArrow() {
-    if (this.selectedItemIndex === null) {
+    if (this.selectedItemIndex.getValue() === null) {
       this.goToBottom(this.itemsCount);
       return false;
     }
@@ -150,7 +151,7 @@ export class TagInputAutocompleteComponent implements OnChanges, OnDestroy, OnIn
 
   handleDownArrow() {
     // Initialize to zero if first time results are shown
-    if (this.selectedItemIndex === null) {
+    if (this.selectedItemIndex.getValue() === null) {
         this.goToTop();
         return false;
     }
@@ -158,7 +159,7 @@ export class TagInputAutocompleteComponent implements OnChanges, OnDestroy, OnIn
   }
 
   selectItem(itemIndex?: number): void {
-    let itemToEmit = itemIndex ? this.items[itemIndex] : this.items[this.selectedItemIndex];
+    let itemToEmit = itemIndex ? this.items[itemIndex] : this.items[this.selectedItemIndex.getValue()];
     if (itemToEmit) {
       this.itemSelected.emit(itemToEmit);
     }
