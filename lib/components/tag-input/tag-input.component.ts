@@ -346,11 +346,13 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
       .filter((tag, index, tagArray) => tagArray.indexOf(tag) === index)
       .filter(tag => (this.showAutocomplete() && this.autocompleteMustMatch) ? this._isTagAutocompleteItem(tag) : true);
 
-    this.tagsList = this.tagsList.concat(validTags);
     this._resetSelected();
     this._resetInput();
-    this.onChange(this.tagsList);
-    this._emitTagAdded(validTags);
+    if (validTags.length > 0) {
+      this.tagsList = this.tagsList.concat(validTags);
+      this.onChange(this.tagsList);
+      this._emitTagAdded(validTags);
+    }
   }
 
   private _removeTag(tagIndexToRemove: number): void {
