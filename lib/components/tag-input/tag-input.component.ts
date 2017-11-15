@@ -51,6 +51,7 @@ export interface AutoCompleteItem {
         (keydown)="onKeydown($event)"
         (blur)="onInputBlurred($event)"
         (focus)="onInputFocused($event)">
+	  <a class="ng2-tag-input-add" (click)="onClickAddButton()">+</a>
 
       <div *ngIf="showAutocomplete()" class="rl-tag-input-autocomplete-container">
         <rl-tag-input-autocomplete
@@ -102,6 +103,12 @@ export interface AutoCompleteItem {
     :host.ng2-tag-input-focus {
       box-shadow: 0 2px #0d8bff;
     }
+	
+	:host .ng2-tag-input-add {
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
   `],
   providers: [
     {provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => TagInputComponent), multi: true},
@@ -276,6 +283,10 @@ export class TagInputComponent implements ControlValueAccessor, OnDestroy, OnIni
       this.canShowAutoComplete &&
       this.inputValue.length >= this.minTagLength
     );
+  }
+  
+  onClickAddButton() {
+	this._addTags([this.inputValue]);
   }
 
   public get maxItemsReached(): boolean {
